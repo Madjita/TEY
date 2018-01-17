@@ -12,17 +12,23 @@ MainWindow::MainWindow(QWidget *parent) :
     fileNames_S_R.append(ui->lineEdit->text());
     fileNames.append(ui->lineEdit_2->text());
 
-    fileNames_XP_XS_XW.append(ui->lineEdit_3->text());
+    fileNames_XP_XS_XW_X.append(ui->lineEdit_3->text());
     fileNames_C_Z.append(ui->lineEdit_4->text());
 
     fileNames_BQ.append(ui->lineEdit_6->text());
 
-    fileNames_DA_DD.append(ui->lineEdit_7->text());
+    fileNames_DA.append(ui->lineEdit_7->text());
 
 
     fileNames_findMSWord.append( ui->lineEdit_8->text());
 
+     fileNames_U.append(ui->lineEdit_9->text());
 
+     fileNames_L.append(ui->lineEdit_10->text());
+
+     fileNames_DD.append(ui->lineEdit_11->text());
+
+     fileNames_TV.append(ui->lineEdit_12->text());
 
 
     InformLoading = new QLabel();
@@ -38,8 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addWidget(prBar);
 
 
-    word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA_DD[0]);
-
+    word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW_X[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA[0],fileNames_U[0],fileNames_L[0],fileNames_DD[0],fileNames_TV[0]);
 
     word->SetTemp(ui->lineEdit_5->text().toInt());
 
@@ -72,7 +77,7 @@ void MainWindow::on_pushButton_clicked()
    InformLoading->setText("Создание карт: ");
 
 
-  // word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA_DD[0]);
+  // word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW_X[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA_DD[0]);
 
 
   // word->SetTemp(ui->lineEdit_5->text().toInt());
@@ -119,22 +124,25 @@ void MainWindow::on_pushButton_D_clicked()
     {
         fileNames = dialog.selectedFiles();
 
-    ui->lineEdit_2->setText(fileNames[0]);
+
+        word->FileDir = fileNames[0];
+
+        ui->lineEdit_2->setText(fileNames[0]);
     }
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    fileNames_XP_XS_XW.clear();
+    fileNames_XP_XS_XW_X.clear();
 
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
 
     if (dialog.exec())
     {
-        fileNames_XP_XS_XW = dialog.selectedFiles();
+        fileNames_XP_XS_XW_X = dialog.selectedFiles();
 
-    ui->lineEdit_3->setText(fileNames_XP_XS_XW[0]);
+    ui->lineEdit_3->setText(fileNames_XP_XS_XW_X[0]);
     }
 }
 
@@ -170,16 +178,16 @@ void MainWindow::on_pushButton_4_clicked()
 
 void MainWindow::on_pushButton_5_clicked()
 {
-    fileNames_DA_DD.clear();
+    fileNames_DA.clear();
 
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
 
     if (dialog.exec())
     {
-        fileNames_DA_DD = dialog.selectedFiles();
+        fileNames_DA = dialog.selectedFiles();
 
-    ui->lineEdit_7->setText(fileNames_DA_DD[0]);
+    ui->lineEdit_7->setText(fileNames_DA[0]);
     }
 }
 
@@ -227,4 +235,67 @@ void MainWindow::on_pushButton_6_clicked()
     word->SetDirFindMSWord(fileNames_findMSWord[0]);
 
     emit findOnMSWord();
+}
+
+void MainWindow::on_pushButton_8_clicked()
+{
+
+    fileNames_U.clear();
+
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        fileNames_U = dialog.selectedFiles();
+
+        ui->lineEdit_9->setText(fileNames_U[0]);
+    }
+
+
+}
+
+void MainWindow::on_pushButton_9_clicked()
+{
+    fileNames_L.clear();
+
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        fileNames_L = dialog.selectedFiles();
+
+        ui->lineEdit_10->setText(fileNames_L[0]);
+    }
+}
+
+void MainWindow::on_pushButton_10_clicked()
+{
+    fileNames_DD.clear();
+
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        fileNames_DD = dialog.selectedFiles();
+
+        ui->lineEdit_11->setText(fileNames_DD[0]);
+    }
+}
+
+void MainWindow::on_pushButton_11_clicked()
+{
+    fileNames_TV.clear();
+
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        fileNames_TV = dialog.selectedFiles();
+
+        ui->lineEdit_12->setText(fileNames_TV[0]);
+    }
 }
