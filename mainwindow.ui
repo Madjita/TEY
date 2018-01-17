@@ -15,10 +15,142 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="13" column="0">
-     <widget class="QLabel" name="label_8">
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_10">
       <property name="text">
-       <string>Путь до Файла с одинаковыми данными :</string>
+       <string>Дроссели (форма 86)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QPushButton" name="pushButton_9">
+      <property name="text">
+       <string>Задать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLineEdit" name="lineEdit_10">
+      <property name="text">
+       <string>D:/11111/LShablon.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Циф.микросхемы (форма 65)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLineEdit" name="lineEdit_11">
+      <property name="text">
+       <string>D:/11111/DDShablon.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QPushButton" name="pushButton_10">
+      <property name="text">
+       <string>Задать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="2">
+     <widget class="QPushButton" name="pushButton_7">
+      <property name="text">
+       <string>Задать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>Задать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Темпeратура Окружающей среды (в схеме): </string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="1">
+     <widget class="QLineEdit" name="lineEdit_8">
+      <property name="text">
+       <string>D:/11111/1/R.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="lineEdit_3">
+      <property name="text">
+       <string>D:/11111/XPXSXWShablon.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="18" column="0" colspan="3">
+     <widget class="QPushButton" name="pushButton_6">
+      <property name="text">
+       <string>Найти одинаковые </string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QLineEdit" name="lineEdit_5">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>50</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLineEdit" name="lineEdit_9">
+      <property name="text">
+       <string>D:/11111/UShablon.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_9">
+      <property name="text">
+       <string>Источники питания (форма 83)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="0" colspan="3">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Создать карточку</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QPushButton" name="pushButton_8">
+      <property name="text">
+       <string>Задать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Путь до шаблона XP XS XW</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Путь до шаблона BQ</string>
       </property>
      </widget>
     </item>
@@ -32,7 +164,7 @@
     <item row="5" column="1">
      <widget class="QLineEdit" name="lineEdit_7">
       <property name="text">
-       <string>D:/11111/DADDShablon.docx</string>
+       <string>D:/11111/DAShablon.docx</string>
       </property>
      </widget>
     </item>
@@ -50,17 +182,31 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <widget class="QLineEdit" name="lineEdit_2">
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButton_S_R">
       <property name="text">
-       <string>D:/11111/Lol.docx</string>
+       <string>Задать</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
+    <item row="10" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
        <string>Путь до Данных</string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="0">
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>Путь до Файла с одинаковыми данными :</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="text">
+       <string>D:/11111/Lol.docx</string>
       </property>
      </widget>
     </item>
@@ -71,38 +217,17 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="pushButton_S_R">
-      <property name="text">
-       <string>Задать</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Путь до шаблона XP XS XW</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="2">
-     <widget class="QPushButton" name="pushButton_D">
-      <property name="text">
-       <string>Задать</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="text">
-       <string>D:/11111/RShablon.docx</string>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Путь до шаблона С</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="2">
+     <widget class="QPushButton" name="pushButton_D">
+      <property name="text">
+       <string>Задать</string>
       </property>
      </widget>
     </item>
@@ -113,10 +238,17 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="pushButton_3">
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="lineEdit">
       <property name="text">
-       <string>Задать</string>
+       <string>D:/11111/RShablon.docx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Путь до шаблона DA</string>
       </property>
      </widget>
     </item>
@@ -127,72 +259,24 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="lineEdit_3">
-      <property name="text">
-       <string>D:/11111/XPXSXWShablon.docx</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>Путь до шаблона BQ</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Путь до шаблона DA,DD</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0" colspan="3">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Создать карточку</string>
-      </property>
-     </widget>
-    </item>
     <item row="9" column="0">
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="label_12">
       <property name="text">
-       <string>Темпeратура Окружающей среды (в схеме): </string>
+       <string> Трансформаторы ( форма 84 )</string>
       </property>
      </widget>
     </item>
     <item row="9" column="1">
-     <widget class="QLineEdit" name="lineEdit_5">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>16777215</height>
-       </size>
-      </property>
+     <widget class="QLineEdit" name="lineEdit_12">
       <property name="text">
-       <string>50</string>
+       <string>D:/11111/TVShablon.docx</string>
       </property>
      </widget>
     </item>
-    <item row="13" column="1">
-     <widget class="QLineEdit" name="lineEdit_8">
-      <property name="text">
-       <string>D:/11111/1/R.docx</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="2">
-     <widget class="QPushButton" name="pushButton_7">
+    <item row="9" column="2">
+     <widget class="QPushButton" name="pushButton_11">
       <property name="text">
        <string>Задать</string>
-      </property>
-     </widget>
-    </item>
-    <item row="14" column="0" colspan="3">
-     <widget class="QPushButton" name="pushButton_6">
-      <property name="text">
-       <string>Найти одинаковые </string>
       </property>
      </widget>
     </item>
