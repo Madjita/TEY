@@ -15,9 +15,11 @@ class MYWORD : public QObject
 {
     Q_OBJECT
 public:
-    explicit MYWORD(QString FileDir, QString FileDir_S_R,QString FileDir_XP_XS_XW,QString FileDir_C_Z, QString FileDir_BQ,QString FileDir_DA_DD,QObject *parent = 0);
+    explicit MYWORD(QString FileDir, QString FileDir_S_R,QString FileDir_XP_XS_XW_X,QString FileDir_C_Z, QString FileDir_BQ,QString FileDir_DA,QString FileDir_U,QString FileDir_L,QString FileDir_DD,QString FileDir_TV,QObject *parent = 0);
 
-    QString FileDir,FileDir_S_R,FileDir_XP_XS_XW,FileDir_C_Z,FileDir_BQ,FileDir_DA_DD,FileDir_FindMSWord;
+    QString FileDir,FileDir_S_R,FileDir_XP_XS_XW_X,FileDir_C_Z,FileDir_BQ,FileDir_DA,FileDir_DD,FileDir_FindMSWord;
+
+    QString FileDir_U, FileDir_L, FileDir_TV;
 
 
     QList<QAxObject*> WordApplicationShablonList; // Шаблоны
@@ -50,16 +52,31 @@ public:
 
 
     //КАРТА   РАБОЧИХ   РЕЖИМОВ   ЭЛЕКТРИЧЕСКИХ   СОЕДИНЕНИЙ,   ПРОВОДОВ   И   КАБЕЛЕЙ
-    QStringList XP_XS_XW;  //Вилка
-    QStringList XP_XS_XWName; //ИмяВилки
+    QStringList XP_XS_XW_X;  //Вилка
+    QStringList XP_XS_XW_XName; //ИмяВилки
 
     //КАРТА   РАБОЧИХ   РЕЖИМОВ   КВАРЦЕВЫХ   РЕЗОНАТОРОВ,   КВАРЦЕВЫХ   МИКРОГЕНЕРАТОРОВ,   ПЬЕЗОЭЛЕКТРИЧЕСКИХ
     //И ЭЛЕКТРОМЕХАНИЧЕСКИХ   ФИЛЬТРОВ   И   ЛИНИЙ   ЗАДЕРЖКИ   НА   ПОВЕРХНОСТНЫХ   АКУСТИЧЕСКИХ   ВОЛНАХ
     QStringList BQ;
     QStringList BQName;
 
-    QStringList DA_DD;
-    QStringList DA_DDName;
+    QStringList DD;
+    QStringList DDName;
+
+    QStringList DA;
+    QStringList DAName;
+
+
+    //РЕЖИМОВ   ВТОРИЧНЫХ   ИСТОЧНИКОВ   ПИТАНИЯ (ФОРМА  82/83)
+    QStringList U;
+    QStringList UName;
+
+
+    QStringList L;
+    QStringList LName;
+
+    QStringList TV;
+    QStringList TVName;
 
 
 
@@ -112,11 +129,19 @@ public slots:
 
     void CreatShablon_C_Z();
 
-    void CreatShablon_XP_XS_XW();
+    void CreatShablon_XP_XS_XW_X();
 
     void CreatShablon_BQ();
 
-    void CreatShablon_DA_DD();
+    void CreatShablon_DA();
+
+    void CreatShablon_DD();
+
+    void CreatShablon_U();
+
+    void CreatShablon_L();
+
+    void CreatShablon_TV();
 
     void Work();
 
