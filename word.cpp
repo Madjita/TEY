@@ -4441,6 +4441,9 @@ QString MYWORD::addData_R_U_NTD(int i,double p)
         {
             code += ".";
             code += strR[2];
+            code += strR[strR.count()-3];
+
+            u = qSqrt(code.toDouble() *p);
         }
         else
         {
@@ -4448,16 +4451,21 @@ QString MYWORD::addData_R_U_NTD(int i,double p)
              {
                  code += strR[1];
                  code += ".";
+                 code += strR[strR.count()-3];
+
+                 u = qSqrt(code.toDouble() *p);
              }
              else
              {
                 code += strR[1];
                 code += strR[2];
+
+                u = qSqrt((code.toInt() * qPow(10,QString(strR[strR.count()-3]).toInt()))*p);
              }
         }
 
 
-        u = qSqrt((code.toInt() * qPow(10,QString(strR[strR.count()-3]).toInt()))*p);
+
 
         return QString::number(u);
     }
