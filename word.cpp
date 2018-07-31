@@ -2,7 +2,8 @@
 
 #include <QtDebug>
 
-
+#include <QThread>
+#include <QtCore/qmath.h>
 
 MYWORD::MYWORD(QString _FileDir, QString _FileDir_S_R,QString _FileDir_XP_XS_XW_X,QString _FileDir_C_Z,QString _FileDir_BQ,QString _FileDir_DA,QString _FileDir_U,QString _FileDir_L,QString _FileDir_DD,QString _FileDir_TV,QObject *parent) : QObject(parent),
     FileDir(_FileDir),
@@ -17,6 +18,69 @@ MYWORD::MYWORD(QString _FileDir, QString _FileDir_S_R,QString _FileDir_XP_XS_XW_
     FileDir_TV(_FileDir_TV)
 {
 
+    saveDir = QDir::currentPath();
+
+
+    this->moveToThread(new QThread());
+
+    connect(this->thread(),&QThread::started,this,&MYWORD::process_start);
+
+    this->thread()->start();
+
+
+
+}
+
+void MYWORD::setBD(BData *_data)
+{
+    bd = _data;
+
+    QSqlQueryModel* model =  bd->getInquiry("SELECT *"
+                                            " FROM R_GRM");
+
+    c_grm_codePower.clear();
+    c_grm_codeTemperatureRange.clear();
+    c_grm_power.clear();
+    c_grm_TemperatureRange.clear();
+
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        if(model->record(i).value("Power").toString() != "")
+        {
+            c_grm_codePower << model->record(i).value("Code").toString();
+            c_grm_power << model->record(i).value("Power").toString();
+        }
+        else
+        {
+            c_grm_codeTemperatureRange << model->record(i).value("Code").toString();
+            c_grm_TemperatureRange << model->record(i).value("TemperatureRange").toString();
+        }
+    }
+    /*qDebug() << r_grm_codePower;
+    qDebug() << r_grm_codeTemperatureRange;
+    qDebug() << r_grm_power;
+    qDebug() << r_grm_TemperatureRange;
+    */
+
+    model =  bd->getInquiry("SELECT *"
+                            " FROM C_CR");
+
+    r_cr_code.clear();
+    r_cr_power.clear();
+    r_cr_TemperatureRange.clear();
+
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        r_cr_code << model->record(i).value("Code").toString();
+        r_cr_power << model->record(i).value("Power").toString();
+        r_cr_TemperatureRange << model->record(i).value("TemperatureRange").toString();
+    }
+
+}
+
+void MYWORD::process_start()
+{
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
 }
 
 void MYWORD::SetTemp(int R)
@@ -34,6 +98,9 @@ void MYWORD::Work()
 {
     // OpenWord();
 
+    // CoInitialize(0);
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
     OpenWord_Perechen();
 }
 
@@ -42,7 +109,7 @@ void MYWORD::WorkFind()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-  //  WordApplication_2->setProperty("Visible", 1);
+    //  WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -1328,57 +1395,57 @@ void MYWORD::WorkFind()
 
 
 
-//    for(int i=0;i < Find_EName.count();i++)
-//    {
-//        if(result.count() < 1)
-//        {
-//            flagApp = true;
+    //    for(int i=0;i < Find_EName.count();i++)
+    //    {
+    //        if(result.count() < 1)
+    //        {
+    //            flagApp = true;
 
-//            result.append(Find_EName[i]);
-//            Send_Find_E.append(QStringList());
-//            Send_Find_E[result.count()-1].append(Find_E[i]);
-//            Send_Find_Data_1.append(Find_Data_1[i]);
-//            Send_Find_Data_2.append(Find_Data_2[i]);
+    //            result.append(Find_EName[i]);
+    //            Send_Find_E.append(QStringList());
+    //            Send_Find_E[result.count()-1].append(Find_E[i]);
+    //            Send_Find_Data_1.append(Find_Data_1[i]);
+    //            Send_Find_Data_2.append(Find_Data_2[i]);
 
-//        }
-//        else
-//        {
+    //        }
+    //        else
+    //        {
 
-//            int res = result.count();
+    //            int res = result.count();
 
-//            for(int j=0; j < res;j++)
-//            {
-//                flagApp = false;
+    //            for(int j=0; j < res;j++)
+    //            {
+    //                flagApp = false;
 
-//                if(Find_EName[i] == result[j])
-//                {
-//                    flagApp = true;
+    //                if(Find_EName[i] == result[j])
+    //                {
+    //                    flagApp = true;
 
-//                    break;
-//                }
+    //                    break;
+    //                }
 
-//            }
+    //            }
 
-//            if(flagApp == false)
-//            {
-//                result.append(Find_EName[i]);
-//                Send_Find_E.append(QStringList());
-//                Send_Find_E[result.count()-1].append(Find_E[i]);
-//                Send_Find_Data_1.append(Find_Data_1[i]);
-//                Send_Find_Data_2.append(Find_Data_2[i]);
-//            }
-//            else
-//            {
-//                Send_Find_E[result.count()-1].append(Find_E[i]);
-//                Send_Find_Data_1[result.count()-1].append(Find_Data_1[i]);
-//                Send_Find_Data_2[result.count()-1].append(Find_Data_2[i]);
+    //            if(flagApp == false)
+    //            {
+    //                result.append(Find_EName[i]);
+    //                Send_Find_E.append(QStringList());
+    //                Send_Find_E[result.count()-1].append(Find_E[i]);
+    //                Send_Find_Data_1.append(Find_Data_1[i]);
+    //                Send_Find_Data_2.append(Find_Data_2[i]);
+    //            }
+    //            else
+    //            {
+    //                Send_Find_E[result.count()-1].append(Find_E[i]);
+    //                Send_Find_Data_1[result.count()-1].append(Find_Data_1[i]);
+    //                Send_Find_Data_2[result.count()-1].append(Find_Data_2[i]);
 
-//            }
+    //            }
 
-//        }
+    //        }
 
 
-//    }
+    //    }
 
     QString first;
     do
@@ -1503,40 +1570,40 @@ void MYWORD::WorkFind()
             {
                 if(  (list[j] != list[j+1]) ||  ( list2[j] != list2[j+1]))
                 {
-                  //  Send_Find_Data_1.replace(i,list[j]);
-                  //  Send_Find_Data_2.replace(i,list2[j]);
+                    //  Send_Find_Data_1.replace(i,list[j]);
+                    //  Send_Find_Data_2.replace(i,list2[j]);
 
-//                    auto list_copy = list;
+                    //                    auto list_copy = list;
 
-//                    QStringList first = list_copy[0];
-//                    Send_Find_E.append(QStringList());
+                    //                    QStringList first = list_copy[0];
+                    //                    Send_Find_E.append(QStringList());
 
-//                    do
-//                    {
-//                        for(int k =0;k < list_copy.count();k++)
-//                        {
-//                            if(list_copy[k] == first)
-//                            {
+                    //                    do
+                    //                    {
+                    //                        for(int k =0;k < list_copy.count();k++)
+                    //                        {
+                    //                            if(list_copy[k] == first)
+                    //                            {
 
 
-//                                result.append(result[i]);
+                    //                                result.append(result[i]);
 
-//                                Send_Find_E.last().append(Send_Find_E[i].value(j+1));
-//                                Send_Find_E[i].removeAt(j+1);
-//                                Send_Find_Data_1[result.count()-1].append(Find_Data_1[i]);
-//                                Find_Data_1.removeAt(i);
-//                                Send_Find_Data_2[result.count()-1].append(Find_Data_2[i]);
-//                                Find_Data_2.removeAt(i);
-//                                list_copy.removeAt(k);
-//                                k--;
-//                            }
-//                        }
+                    //                                Send_Find_E.last().append(Send_Find_E[i].value(j+1));
+                    //                                Send_Find_E[i].removeAt(j+1);
+                    //                                Send_Find_Data_1[result.count()-1].append(Find_Data_1[i]);
+                    //                                Find_Data_1.removeAt(i);
+                    //                                Send_Find_Data_2[result.count()-1].append(Find_Data_2[i]);
+                    //                                Find_Data_2.removeAt(i);
+                    //                                list_copy.removeAt(k);
+                    //                                k--;
+                    //                            }
+                    //                        }
 
-//                    }while(list_copy.count() < 1);
+                    //                    }while(list_copy.count() < 1);
 
-                  //  Send_Find_E.append(QStringList());
-                  //  Send_Find_E.last().append(Send_Find_E[i].value(j+1));
-                  //  Send_Find_E[i].removeAt(j+1);
+                    //  Send_Find_E.append(QStringList());
+                    //  Send_Find_E.last().append(Send_Find_E[i].value(j+1));
+                    //  Send_Find_E[i].removeAt(j+1);
 
                     Send_Find_E_eshe.append(QStringList());
                     Send_Find_E_eshe.last().append(Send_Find_E[i].value(j+1));
@@ -1544,9 +1611,9 @@ void MYWORD::WorkFind()
 
                     result_2.append(result[i]);
 
-                  //  list.removeAt(j+1);
-                 //   Send_Find_Data_1.append(list[j+1]);
-                 //   Send_Find_Data_2.append(list2[j+1]);
+                    //  list.removeAt(j+1);
+                    //   Send_Find_Data_1.append(list[j+1]);
+                    //   Send_Find_Data_2.append(list2[j+1]);
 
                     list.removeAt(j+1);
                     Send_Find_Data_1_eshe.append(list[j+1]);
@@ -1559,8 +1626,8 @@ void MYWORD::WorkFind()
                 }
                 else
                 {
-//                    Send_Find_Data_1.replace(i,list[j]);
-//                    Send_Find_Data_2.replace(i,list2[j]);
+                    //                    Send_Find_Data_1.replace(i,list[j]);
+                    //                    Send_Find_Data_2.replace(i,list2[j]);
                 }
             }
 
@@ -2266,252 +2333,252 @@ void MYWORD::WorkFind()
             {
 
 
-                   StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 8); // (ячейка 4:4)
-                   CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 8); // (ячейка 4:4)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(0))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(0));
-                    }
-
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 9); // (ячейка 5:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(1))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(1));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 9); // (ячейка 6:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(2))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(2));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 10); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(3))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(3));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 10); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(4))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(4));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 17, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(5))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(5));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(6))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(6));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 24, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(7))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(7));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 25, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(8))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(8));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 26, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(9))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(9));
-                    }
+                if(text != Send_Find_Data_1[i].value(0))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(0));
+                }
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 27, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 9); // (ячейка 5:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(10))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(10));
-                    }
+                if(text != Send_Find_Data_1[i].value(1))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(1));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 28, 6); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 9); // (ячейка 6:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = StartCell_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(11))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(11));
-                    }
+                if(text != Send_Find_Data_1[i].value(2))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(2));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 10); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(3))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(3));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 10); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(4))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(4));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 17, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(5))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(5));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(6))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(6));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 24, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(7))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(7));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 25, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(8))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(8));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 26, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(9))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(9));
+                }
+
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 27, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(10))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(10));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 28, 6); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = StartCell_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(11))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(11));
+                }
 
 
                 //    //////////////////////////////////////////////////////////////////////////////////////
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9); // (ячейка 4:4)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9); // (ячейка 4:4)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(0))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(0));
-                    }
+                if(text != Send_Find_Data_2[i].value(0))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(0));
+                }
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 10); // (ячейка 5:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 10); // (ячейка 5:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(1))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(1));
-                    }
+                if(text != Send_Find_Data_2[i].value(1))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(1));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 10); // (ячейка 6:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 10); // (ячейка 6:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(2))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(2));
-                    }
+                if(text != Send_Find_Data_2[i].value(2))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(2));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 11); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 11); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(3))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(3));
-                    }
+                if(text != Send_Find_Data_2[i].value(3))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(3));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 11); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 11); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(4))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(4));
-                    }
+                if(text != Send_Find_Data_2[i].value(4))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(4));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 17, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 17, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(5))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(5));
-                    }
+                if(text != Send_Find_Data_2[i].value(5))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(5));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(6))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(6));
-                    }
+                if(text != Send_Find_Data_2[i].value(6))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(6));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 24, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 24, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(7))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(7));
-                    }
+                if(text != Send_Find_Data_2[i].value(7))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(7));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 25, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 25, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(8))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(8));
-                    }
+                if(text != Send_Find_Data_2[i].value(8))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(8));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 26, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 26, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(9))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(9));
-                    }
+                if(text != Send_Find_Data_2[i].value(9))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(9));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 27, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 27, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(10))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(10));
-                    }
+                if(text != Send_Find_Data_2[i].value(10))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(10));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 28, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 28, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(11))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(11));
-                    }
+                if(text != Send_Find_Data_2[i].value(11))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(11));
+                }
 
                 //    /////////////////////////////////////////////////////
                 break;
@@ -3223,252 +3290,252 @@ void MYWORD::WorkFind()
             {
 
 
-                   StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 8); // (ячейка 4:4)
-                   CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 8); // (ячейка 4:4)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(0))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(0));
-                    }
-
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 8); // (ячейка 5:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(1))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(1));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 8); // (ячейка 6:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(2))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(2));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(3))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(3));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(4))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(4));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(5))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(5));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 10, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(6))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(6));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 11, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(7))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(7));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 12, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(8))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(8));
-                    }
-
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 13, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
-
-                    text = CellRange_2_3->property("Text").toString();
-
-                    if(text != Send_Find_Data_1[i].value(9))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(9));
-                    }
+                if(text != Send_Find_Data_1[i].value(0))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(0));
+                }
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 8); // (ячейка 5:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(10))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(10));
-                    }
+                if(text != Send_Find_Data_1[i].value(1))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(1));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 8); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 8); // (ячейка 6:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = StartCell_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_1[i].value(11))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(11));
-                    }
+                if(text != Send_Find_Data_1[i].value(2))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(2));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(3))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(3));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(4))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(4));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(5))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(5));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 10, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(6))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(6));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 11, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(7))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(7));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 12, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(8))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(8));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 13, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(9))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(9));
+                }
+
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = CellRange_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(10))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(10));
+                }
+
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 8); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+                text = StartCell_2_3->property("Text").toString();
+
+                if(text != Send_Find_Data_1[i].value(11))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_1[i].value(11));
+                }
 
 
                 //    //////////////////////////////////////////////////////////////////////////////////////
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9); // (ячейка 4:4)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9); // (ячейка 4:4)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(0))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(0));
-                    }
+                if(text != Send_Find_Data_2[i].value(0))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(0));
+                }
 
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 9); // (ячейка 5:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 5, 9); // (ячейка 5:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(1))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(1));
-                    }
+                if(text != Send_Find_Data_2[i].value(1))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(1));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 9); // (ячейка 6:5)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 6, 9); // (ячейка 6:5)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(2))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(2));
-                    }
+                if(text != Send_Find_Data_2[i].value(2))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(2));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 7, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(3))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(3));
-                    }
+                if(text != Send_Find_Data_2[i].value(3))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(3));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 8, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2->property("Text").toString();
+                text = CellRange_2->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(4))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(4));
-                    }
+                if(text != Send_Find_Data_2[i].value(4))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(4));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(5))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(5));
-                    }
+                if(text != Send_Find_Data_2[i].value(5))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(5));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 10, 10); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 10, 10); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(6))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(6));
-                    }
+                if(text != Send_Find_Data_2[i].value(6))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(6));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 11, 10); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 11, 10); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(7))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(7));
-                    }
+                if(text != Send_Find_Data_2[i].value(7))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(7));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 12, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 12, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(8))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(8));
-                    }
+                if(text != Send_Find_Data_2[i].value(8))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(8));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 13, 7); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 13, 7); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(9))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(9));
-                    }
+                if(text != Send_Find_Data_2[i].value(9))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(9));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(10))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(10));
-                    }
+                if(text != Send_Find_Data_2[i].value(10))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(10));
+                }
 
-                    StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 9); // (ячейка 7:6)
-                    CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+                StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 9); // (ячейка 7:6)
+                CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
-                    text = CellRange_2_3->property("Text").toString();
+                text = CellRange_2_3->property("Text").toString();
 
-                    if(text != Send_Find_Data_2[i].value(11))
-                    {
-                        CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(11));
-                    }
+                if(text != Send_Find_Data_2[i].value(11))
+                {
+                    CellRange_2_3->dynamicCall("InsertAfter(Text)", Send_Find_Data_2[i].value(11));
+                }
 
                 //    /////////////////////////////////////////////////////
                 break;
@@ -3551,7 +3618,7 @@ void MYWORD::OpenWord()
 {
     QAxObject* WordApplication = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-   // WordApplication->setProperty("Visible", 1);
+    // WordApplication->setProperty("Visible", 1);
 
     QAxObject* WordDocuments = WordApplication->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -3625,7 +3692,7 @@ void MYWORD::OpenWord()
 
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-   // WordApplication_2->setProperty("Visible", 1);
+    // WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -3768,7 +3835,7 @@ void MYWORD::OpenWord()
     //Сохранить pdf
     ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//Good" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//Good");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//Good");//"D://11111//1//Good");
     ActiveDocument_2->dynamicCall("Close (boolean)", false);
     ActiveDocument->dynamicCall("Close (boolean)", false);
 
@@ -3783,13 +3850,17 @@ void MYWORD::OpenWord_Perechen()
 
     WordApplication = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
+    Part("[Load] Открытие документа : " + FileDir);
 
     //  WordApplication->setProperty("Visible", 1); //Показать (Открыть) окно MSWord с документом
 
     WordDocuments = WordApplication->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
+    Part("[Documents()] Открытие документа : " + FileDir);
+
     WordDocuments->querySubObject( "Open(%T)",FileDir); //D:\\11111\\One.docx
 
+    Part("[OK] Открытие документа : " + FileDir);
 
     ActiveDocument = WordApplication->querySubObject("ActiveDocument()"); // Сделать документ активным
 
@@ -3859,7 +3930,7 @@ void MYWORD::Findelements_Perechen()
     emit ChangeWork(rows*columns);
 
 
-    Part("Ищим Элименты... Колонок: " + QString::number(columns) + " Строк: " +  QString::number(rows));
+    Part("Ищем Элементы... Колонок: " + QString::number(columns) + " Строк: " +  QString::number(rows));
 
     for(int i=1; i <  rows;i++)
     {
@@ -3877,7 +3948,7 @@ void MYWORD::Findelements_Perechen()
             text =  CellRange->property("Text").toString();
 
 
-            //Ищим R (резисторы)
+            //Ищем R (резисторы)
             if((text[0] == "R") && (j == 2))
             {
                 count_find++;
@@ -3896,7 +3967,7 @@ void MYWORD::Findelements_Perechen()
 
             }
 
-            //Ищим C (конденсаторы)
+            //Ищем C (конденсаторы)
             if((text[0] == "C") && (j == 2)) //С
             {
                 C_Z.append(text);
@@ -3912,7 +3983,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим Z (фильтры)
+            //Ищем Z (фильтры)
             if((text[0] == "Z") && (j == 2))
             {
                 C_Z.append(text);
@@ -3928,7 +3999,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим X (вилка)
+            //Ищем X (вилка)
             if((text[0] == "X") && (j == 2))
             {
                 XP_XS_XW_X.append(text);
@@ -3944,7 +4015,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим XP (вилка)
+            //Ищем XP (вилка)
             if(((text[0] == "X") && (text[1] == "P")) && (j == 2))
             {
                 XP_XS_XW_X.append(text);
@@ -3960,7 +4031,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим XS (Розетка)
+            //Ищем XS (Розетка)
             if(((text[0] == "X") && (text[1] == "S")) && (j == 2))
             {
                 XP_XS_XW_X.append(text);
@@ -3976,7 +4047,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим XW (Вилка)
+            //Ищем XW (Вилка)
             if(((text[0] == "X") && (text[1] == "W")) && (j == 2))
             {
                 XP_XS_XW_X.append(text);
@@ -3992,7 +4063,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим BQ (Резонатор)
+            //Ищем BQ (Резонатор)
             if(((text[0] == "B") && (text[1] == "Q")) && (j == 2))
             {
                 BQ.append(text);
@@ -4008,7 +4079,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим DA (Микросхема)
+            //Ищем DA (Микросхема)
             if(((text[0] == "D") && (text[1] == "A")) && (j == 2))
             {
                 DA.append(text);
@@ -4024,7 +4095,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим DD (Микросхема)
+            //Ищем DD (Микросхема)
             if(((text[0] == "D") && (text[1] == "D")) && (j == 2))
             {
                 DD.append(text);
@@ -4040,7 +4111,7 @@ void MYWORD::Findelements_Perechen()
                 break;
             }
 
-            //Ищим U (источники питания)
+            //Ищем U (источники питания)
             if((text[0] == "U") && (j == 2))
             {
                 U.append(text);
@@ -4057,7 +4128,7 @@ void MYWORD::Findelements_Perechen()
 
             }
 
-            //Ищим L
+            //Ищем L
             if((text[0] == "L") && (j == 2))
             {
                 L.append(text);
@@ -4073,7 +4144,7 @@ void MYWORD::Findelements_Perechen()
 
             }
 
-            //Ищим L
+            //Ищем L
             if(((text[0] == "T") && (text[1] == "V"))  && (j == 2))
             {
                 TV.append(text);
@@ -4179,84 +4250,95 @@ void MYWORD::Findelements_Perechen()
 void MYWORD::CreatShablon()
 {
 
-    Part("Создание шаблона с XP XS XW.");
+    /*  Part("Создание шаблона с XP XS XW. ["+saveDir+"//XPXSXW]");
 
     if(XP_XS_XW_X.count() > 0)
     {
         CreatShablon_XP_XS_XW_X();
     }
 
-    Sleep(2000);
 
-    Part("Создание шаблона с С Z.");
+    */
+
+
+    //Sleep(2000);
+
+    Part("Создание шаблона с С Z. ["+saveDir+"//СZ]");
 
     if(C_Z.count() > 0)
     {
         CreatShablon_C_Z();
     }
 
-    Sleep(2000);
+    // Sleep(2000);
 
-    Part("Создание шаблона с R.");
 
-    if(R.count() > 0)
-    {
-        CreatShablon_R();
-    }
+    /*
 
-    Sleep(2000);
 
-    Part("Создание шаблона с BQ.");
+    Part("Создание шаблона с BQ. ["+saveDir+"//BQ]");
 
     if(BQ.count() > 0)
     {
         CreatShablon_BQ();
     }
 
-    Sleep(2000);
+    // Sleep(2000);
 
-    Part("Создание шаблона с DA.");
+    Part("Создание шаблона с DA. ["+saveDir+"//DA]");
 
     if(DA.count() > 0)
     {
         CreatShablon_DA();
     }
 
-    Sleep(2000);
+    //  Sleep(2000);
 
-    Part("Создание шаблона с DD.");
+    Part("Создание шаблона с DD. ["+saveDir+"//DD]");
 
     if(DD.count() > 0)
     {
         CreatShablon_DD();
     }
 
-    Sleep(2000);
+    //  Sleep(2000);
 
-    Part("Создание шаблона с U.");
+    Part("Создание шаблона с U. ["+saveDir+"//U]");
 
     if(U.count() > 0)
     {
         CreatShablon_U();
     }
 
-    Sleep(2000);
+    // Sleep(2000);
 
-    Part("Создание шаблона с L.");
+    Part("Создание шаблона с L. ["+saveDir+"//L]");
 
     if(L.count() > 0)
     {
         CreatShablon_L();
     }
 
-    Sleep(2000);
+    // Sleep(2000);
 
-    Part("Создание шаблона с TV.");
+    Part("Создание шаблона с TV. ["+saveDir+"//TV]");
 
     if(TV.count() > 0)
     {
         CreatShablon_TV();
     }
+
+    // Sleep(2000);
+
+    */
+
+    Part("Создание шаблона с R. ["+saveDir+"//R]");
+
+    if(R.count() > 0)
+    {
+        CreatShablon_R();
+    }
+
 
 
 
@@ -4291,11 +4373,104 @@ void MYWORD::CreatShablon()
 
 }
 
+
+QString MYWORD::addData_R_Power_NTD(int i)
+{
+    QString code = "";
+    int findIndex = 0;
+    QString str = RName[i].split(' ').last();
+
+    if(str[0] == 'C' && str[1] == 'R')
+    {
+        code += str[2];
+        code += str[3];
+        code += str[4];
+        code += str[5];
+
+        findIndex = r_cr_code.indexOf(code);
+
+        if(findIndex != -1)
+        {
+            return r_cr_power.value(findIndex);
+        }
+    }
+
+    return "";
+
+}
+
+QString MYWORD::addData_R_TemperatureRange_NTD(int i)
+{
+    QString code = "";
+    int findIndex = 0;
+    QString str = RName[i].split(' ').last();
+
+    if(str[0] == 'C' && str[1] == 'R')
+    {
+        code += str[2];
+        code += str[3];
+        code += str[4];
+        code += str[5];
+
+        findIndex = r_cr_code.indexOf(code);
+
+        if(findIndex != -1)
+        {
+            return r_cr_TemperatureRange.value(findIndex);
+        }
+    }
+
+    return "";
+
+}
+
+QString MYWORD::addData_R_U_NTD(int i,double p)
+{
+    QString code = "";
+    QString str = RName[i].split(' ').last();
+    QString strR = str.split('-').last();
+
+    double u = 0;
+
+
+    if(str[0] == 'C' && str[1] == 'R')
+    {
+        code += strR[0];
+
+        if(strR[1] == 'R')
+        {
+            code += ".";
+            code += strR[2];
+        }
+        else
+        {
+             if(strR[2] == 'R')
+             {
+                 code += strR[1];
+                 code += ".";
+             }
+             else
+             {
+                code += strR[1];
+                code += strR[2];
+             }
+        }
+
+
+        u = qSqrt((code.toInt() * qPow(10,QString(strR[strR.count()-3]).toInt()))*p);
+
+        return QString::number(u);
+    }
+
+    return "";
+}
+
+
 void MYWORD::CreatShablon_R()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -4423,26 +4598,72 @@ void MYWORD::CreatShablon_R()
 
         case 1:
         {
-            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 4); // (ячейка C1)
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 4);
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+
+            //////////////////////
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 16, 4);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+            CellRange_2_3->dynamicCall("InsertAfter(Text)",addData_R_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 5);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_TemperatureRange_NTD(i));
+
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 5);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_U_NTD(i,addData_R_Power_NTD(i).toDouble()));
+
+
             break;
         }
         case 2:
         {
-            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 6); // (ячейка C1)
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 6);
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+            //////////////////////
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 16, 6);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 7);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_TemperatureRange_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 7);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_U_NTD(i,addData_R_Power_NTD(i).toDouble()));
+
             break;
         }
         case 3:
         {
-            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 8); // (ячейка C1)
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 8);
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+            //////////////////////
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 16, 8);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 14, 9);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_TemperatureRange_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_R_U_NTD(i,addData_R_Power_NTD(i).toDouble()));
+
             break;
         }
 
@@ -4480,12 +4701,57 @@ void MYWORD::CreatShablon_R()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//R" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//R");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//R");//"D://11111//1//R");
 
+    qDebug () << saveDir+"//R";
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    // ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
+}
+
+QString MYWORD::addData_C_Power_NTD(int i)
+{
+    QString codePower = "";
+    int findIndex = 0;
+    QString str = C_ZName[i].split(' ').last();
+
+    if(str[0] == 'G' && str[1] == 'R' && str[2] == 'M') //GRM155R61A474KE15
+    {
+        codePower += str[8];
+        codePower += str[9];
+
+        findIndex = c_grm_codePower.indexOf(codePower);
+
+        if(findIndex != -1)
+        {
+            return c_grm_power.value(findIndex);
+        }
+    }
+
+    return "";
+}
+
+QString MYWORD::addData_C_TemperatureRange_NTD(int i)
+{
+    QString codeTemperatureRange = "";
+    int findIndex = 0;
+    QString str = C_ZName[i].split(' ').last();
+
+    if(str[0] == 'G' && str[1] == 'R' && str[2] == 'M') //GRM155R61A474KE15
+    {
+        codeTemperatureRange += str[6];
+        codeTemperatureRange += str[7];
+
+        findIndex = c_grm_codeTemperatureRange.indexOf(codeTemperatureRange);
+
+        if(findIndex != -1)
+        {
+            return c_grm_TemperatureRange.value(findIndex);
+        }
+    }
+
+    return "";
 }
 
 ////////////////////////////////////////////////////
@@ -4495,7 +4761,7 @@ void MYWORD::CreatShablon_C_Z()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -4613,6 +4879,15 @@ void MYWORD::CreatShablon_C_Z()
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 5);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 5);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_TemperatureRange_NTD(i));
+
             break;
         }
         case 2:
@@ -4621,6 +4896,16 @@ void MYWORD::CreatShablon_C_Z()
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 7);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 7);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_TemperatureRange_NTD(i));
+
             break;
         }
         case 3:
@@ -4629,6 +4914,16 @@ void MYWORD::CreatShablon_C_Z()
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 4, 9);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_Power_NTD(i));
+
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 15, 9);
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", addData_C_TemperatureRange_NTD(i));
+
             break;
         }
 
@@ -4664,19 +4959,19 @@ void MYWORD::CreatShablon_C_Z()
     //Сохранить pdf
     //  ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//CZ" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//CZ");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//CZ");//"D://11111//1//CZ");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //  ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_XP_XS_XW_X()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -4846,19 +5141,19 @@ void MYWORD::CreatShablon_XP_XS_XW_X()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//XPXSXW" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//XPXSXW");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//XPXSXW");//"D://11111//1//XPXSXW");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    // ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    // WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_BQ()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    //  WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5018,19 +5313,19 @@ void MYWORD::CreatShablon_BQ()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//BQ" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//BQ");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//BQ");//"D://11111//1//BQ");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //  ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_DA()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    //  WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5175,19 +5470,19 @@ void MYWORD::CreatShablon_DA()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//DADD" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//DA");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//DA");//"D://11111//1//DA");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    // WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_DD()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    //  WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5283,7 +5578,7 @@ void MYWORD::CreatShablon_DD()
 
         case 1:
         {
-            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 4); // (ячейка C1)
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 18, 4); // (ячейка C1)
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
@@ -5291,7 +5586,7 @@ void MYWORD::CreatShablon_DD()
         }
         case 2:
         {
-            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 23, 7); // (ячейка C1)
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 18, 7); // (ячейка C1)
             CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
 
             CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
@@ -5332,19 +5627,19 @@ void MYWORD::CreatShablon_DD()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//DADD" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//DD");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)",saveDir+"//DD"); //"D://11111//1//DD");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //  ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_U()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5496,19 +5791,19 @@ void MYWORD::CreatShablon_U()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//U" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//U");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//U");//"D://11111//1//U");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //  ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_L()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5631,6 +5926,38 @@ void MYWORD::CreatShablon_L()
 
         //Темпиратура
 
+        switch (flag) {
+
+        case 1:
+        {
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 3); // (ячейка C1)
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+            break;
+        }
+        case 2:
+        {
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 5); // (ячейка C1)
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+            break;
+        }
+
+        case 3:
+        {
+            StartCell_2_3  = Tables_2->querySubObject("Cell(Row, Column)", 9, 7); // (ячейка C1)
+            CellRange_2_3 = StartCell_2_3->querySubObject("Range()");
+
+            CellRange_2_3->dynamicCall("InsertAfter(Text)", QString::number(temp));
+            break;
+        }
+
+        }
+
+
+
         if(flag == 3)
         {
             flag =0;
@@ -5657,22 +5984,24 @@ void MYWORD::CreatShablon_L()
 
 
 
+
+
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//L" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//L");
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//L");//"D://11111//1//L");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    //  ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    //  WordApplication_2->dynamicCall("Quit (void)");
 }
 
 void MYWORD::CreatShablon_TV()
 {
     QAxObject* WordApplication_2 = new QAxObject("Word.Application"); // Создаю интерфейс к MSWord
 
-    // WordApplication_2->setProperty("Visible", 1);
+    WordApplication_2->setProperty("Visible", 1);
 
     QAxObject* WordDocuments_2 = WordApplication_2->querySubObject( "Documents()" ); // Получаю интерфейсы к его подобъекту "коллекция открытых документов":
 
@@ -5819,12 +6148,13 @@ void MYWORD::CreatShablon_TV()
     //Сохранить pdf
     //   ActiveDocument_2->dynamicCall("ExportAsFixedFormat (const QString&,const QString&)","D://11111//1//L" ,"17");//fileName.split('.').first()
 
-    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", "D://11111//1//TV");
+
+    ActiveDocument_2->dynamicCall("SaveAs2 (const QString&)", saveDir+"//TV");//"D://11111//1//TV");
 
 
-    ActiveDocument_2->dynamicCall("Close (boolean)", false);
+    // ActiveDocument_2->dynamicCall("Close (boolean)", false);
 
-    WordApplication_2->dynamicCall("Quit (void)");
+    // WordApplication_2->dynamicCall("Quit (void)");
 }
 
 

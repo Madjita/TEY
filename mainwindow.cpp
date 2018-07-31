@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include <QtDebug>
+#include <QSqlQueryModel>
+#include <QSqlRecord>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -43,15 +45,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->statusBar->addWidget(prBar);
 
+    qDebug() << fileNames;
 
     word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW_X[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA[0],fileNames_U[0],fileNames_L[0],fileNames_DD[0],fileNames_TV[0]);
 
     word->SetTemp(ui->lineEdit_5->text().toInt());
 
-    word->moveToThread(new QThread());
 
-
-   // connect(word->thread(),&QThread::started,word,&MYWORD::Work);
 
     connect(this,&MainWindow::begin,word,&MYWORD::Work);
 
@@ -61,7 +61,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(word,&MYWORD::Part,this,&MainWindow::GetPart,Qt::DirectConnection);
 
-    word->thread()->start();
+
+    ui->lineEdit_13->setText(qApp->applicationDirPath());
+
+    on_pushButton_12_clicked();
+
+
+    bd = new BData();
+
+    word->setBD(bd);
+
+
+
+
 
 }
 
@@ -80,21 +92,11 @@ void MainWindow::on_pushButton_clicked()
   // word = new MYWORD(fileNames[0],fileNames_S_R[0],fileNames_XP_XS_XW_X[0],fileNames_C_Z[0],fileNames_BQ[0],fileNames_DA_DD[0]);
 
 
-  // word->SetTemp(ui->lineEdit_5->text().toInt());
-
-  // word->moveToThread(new QThread());
-
-
-  // connect(word->thread(),&QThread::started,word,&MYWORD::Work);
-
-
-  // word->Work();
-
-  // word->thread()->start();
+   word->SetTemp(ui->lineEdit_5->text().toInt());
 
    emit begin();
 
-   // ui->lineEdit->setText(fileNames[0]);
+
 }
 
 void MainWindow::on_pushButton_S_R_clicked()
@@ -298,4 +300,33 @@ void MainWindow::on_pushButton_11_clicked()
 
         ui->lineEdit_12->setText(fileNames_TV[0]);
     }
+}
+
+void MainWindow::on_pushButton_12_clicked()
+{
+
+   QStringList list = ui->lineEdit_13->text().split('/');
+
+   if(list.count() <= 0)
+   {
+      list = ui->lineEdit_13->text().split('\\');
+   }
+
+   QString str ="";
+
+   for(int i=0; i < list.count();i++)
+   {
+       if(i != list.count()-1)
+       {
+            list[i].append("/");
+            list[i].append("/");
+       }
+
+       str += list[i];
+   }
+
+    qDebug () << str;
+
+
+    word->saveDir = str;
 }

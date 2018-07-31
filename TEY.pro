@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui axcontainer
+QT       += core gui axcontainer sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,13 +25,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    word.cpp
+    word.cpp \
+    bdata.cpp
 
 HEADERS  += mainwindow.h \
-    word.h
+    word.h \
+    bdata.h
 
 FORMS    += mainwindow.ui
 
 CONFIG += mobility
-MOBILITY = 
+MOBILITY =
 
+
+RC_ICONS += logo.ico
+
+RESOURCES += \
+    resurce.qrc

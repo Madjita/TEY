@@ -7,6 +7,7 @@
 #include <QThread>
 
 #include <word.h>
+#include <bdata.h>
 
 #include <QProgressBar>
 #include <QLabel>
@@ -28,6 +29,7 @@ public:
      QStringList fileNames_U , fileNames_L,fileNames_TV;
 
      MYWORD* word ;
+     BData* bd;
 
      QLabel* InformLoading;
      QProgressBar* prBar;
@@ -70,6 +72,9 @@ private slots:
     void on_pushButton_10_clicked();
 
     void on_pushButton_11_clicked();
+
+    void on_pushButton_12_clicked();
+
 
 private:
     Ui::MainWindow *ui;

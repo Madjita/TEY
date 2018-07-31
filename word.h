@@ -9,7 +9,11 @@
 #include <QAxBase>
 
 #include <windows.h>
+#include <QDir>
 
+#include <bdata.h>
+#include<QSqlQueryModel>
+#include <QSqlRecord>
 
 class MYWORD : public QObject
 {
@@ -21,6 +25,7 @@ public:
 
     QString FileDir_U, FileDir_L, FileDir_TV;
 
+    QString saveDir;
 
     QList<QAxObject*> WordApplicationShablonList; // Шаблоны
 
@@ -49,6 +54,7 @@ public:
 
     QStringList C_Z;  //конденсаторы и фильтры
     QStringList C_ZName;  //имя конденсаторов
+    QStringList C_NTD_PowerState; // По НТД постоянное напряжение только конденсаторов
 
 
     //КАРТА   РАБОЧИХ   РЕЖИМОВ   ЭЛЕКТРИЧЕСКИХ   СОЕДИНЕНИЙ,   ПРОВОДОВ   И   КАБЕЛЕЙ
@@ -102,6 +108,16 @@ public:
     QStringList lol2_2;
 
 
+    BData *bd;
+    QStringList c_grm_codePower;
+    QStringList c_grm_codeTemperatureRange;
+    QStringList c_grm_power;
+    QStringList c_grm_TemperatureRange;
+
+    QStringList r_cr_code;
+    QStringList r_cr_power;
+    QStringList r_cr_TemperatureRange;
+
 
 
 signals:
@@ -111,6 +127,9 @@ signals:
 
 public slots:
 
+    void setBD(BData* data);
+
+    void process_start();
 
     void SetTemp(int);
 
@@ -125,8 +144,13 @@ public slots:
 
     void CreatShablon();
 
+    QString addData_R_Power_NTD(int i);
+    QString addData_R_TemperatureRange_NTD(int i);
+    QString addData_R_U_NTD(int i,double p);
     void CreatShablon_R();
 
+    QString addData_C_Power_NTD(int i);
+    QString addData_C_TemperatureRange_NTD(int i);
     void CreatShablon_C_Z();
 
     void CreatShablon_XP_XS_XW_X();
