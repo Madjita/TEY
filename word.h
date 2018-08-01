@@ -117,6 +117,7 @@ public:
     QStringList r_cr_code;
     QStringList r_cr_power;
     QStringList r_cr_TemperatureRange;
+    QStringList r_cr_Void;
 
 
 
@@ -140,6 +141,8 @@ public slots:
     void OpenWord_Perechen();
 
     void Findelements_Perechen();
+
+    bool findRussianLanguage(QString text);
 
 
     void CreatShablon();

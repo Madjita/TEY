@@ -72,9 +72,6 @@ MainWindow::MainWindow(QWidget *parent) :
     word->setBD(bd);
 
 
-
-
-
 }
 
 MainWindow::~MainWindow()

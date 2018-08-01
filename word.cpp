@@ -68,12 +68,14 @@ void MYWORD::setBD(BData *_data)
     r_cr_code.clear();
     r_cr_power.clear();
     r_cr_TemperatureRange.clear();
+    r_cr_Void.clear();
 
     for (int i = 0; i < model->rowCount(); ++i)
     {
         r_cr_code << model->record(i).value("Code").toString();
         r_cr_power << model->record(i).value("Power").toString();
         r_cr_TemperatureRange << model->record(i).value("TemperatureRange").toString();
+        r_cr_Void << model->record(i).value("Void").toString();
     }
 
 }
@@ -3961,8 +3963,22 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                RName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    RName.append(text);
+                }
+                else
+                {
+                    RName.append(text);
+                }
+
+
                 break;
 
             }
@@ -3978,8 +3994,22 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                C_ZName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    C_ZName.append(text);
+                }
+                else
+                {
+                    C_ZName.append(text);
+                }
+
+
                 break;
             }
 
@@ -3995,7 +4025,22 @@ void MYWORD::Findelements_Perechen()
                 text =  CellRange->property("Text").toString();
 
 
-                C_ZName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    C_ZName.append(text);
+                }
+                else
+                {
+                    C_ZName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4010,8 +4055,22 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                XP_XS_XW_XName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    XP_XS_XW_XName.append(text);
+                }
+                else
+                {
+                    XP_XS_XW_XName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4027,7 +4086,22 @@ void MYWORD::Findelements_Perechen()
                 text =  CellRange->property("Text").toString();
 
 
-                XP_XS_XW_XName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    XP_XS_XW_XName.append(text);
+                }
+                else
+                {
+                    XP_XS_XW_XName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4042,8 +4116,23 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                XP_XS_XW_XName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    XP_XS_XW_XName.append(text);
+                }
+                else
+                {
+                    XP_XS_XW_XName.append(text);
+                }
+
+
+
                 break;
             }
 
@@ -4059,7 +4148,22 @@ void MYWORD::Findelements_Perechen()
                 text =  CellRange->property("Text").toString();
 
 
-                XP_XS_XW_XName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    XP_XS_XW_XName.append(text);
+                }
+                else
+                {
+                    XP_XS_XW_XName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4074,8 +4178,21 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                BQName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    BQName.append(text);
+                }
+                else
+                {
+                    BQName.append(text);
+                }
+
                 break;
             }
 
@@ -4091,7 +4208,22 @@ void MYWORD::Findelements_Perechen()
                 text =  CellRange->property("Text").toString();
 
 
-                DAName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    DAName.append(text);
+                }
+                else
+                {
+                    DAName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4107,7 +4239,22 @@ void MYWORD::Findelements_Perechen()
                 text =  CellRange->property("Text").toString();
 
 
-                DDName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    DDName.append(text);
+                }
+                else
+                {
+                    DDName.append(text);
+                }
+
+
                 break;
             }
 
@@ -4122,8 +4269,22 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
-                UName.append(text);
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    UName.append(text);
+                }
+                else
+                {
+                    UName.append(text);
+                }
+
+
                 break;
 
             }
@@ -4139,7 +4300,23 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                LName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    LName.append(text);
+                }
+                else
+                {
+                    LName.append(text);
+                }
+
+
+
                 break;
 
             }
@@ -4155,7 +4332,22 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                TVName.append(text);
+                if(findRussianLanguage(text))
+                {
+                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                    CellRange = StartCell->querySubObject("Range()");
+
+                    text+=CellRange->property("Text").toString();
+
+                    TVName.append(text);
+                }
+                else
+                {
+                    TVName.append(text);
+                }
+
+
                 break;
 
             }
@@ -4247,10 +4439,72 @@ void MYWORD::Findelements_Perechen()
 
 }
 
+bool MYWORD::findRussianLanguage(QString text)
+{
+    QString russian = "ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁ";
+
+    if(text[0] == " ")
+    {
+        text.remove(0,1);
+    }
+
+    auto list = text.split(' ');
+
+
+    for(int i=0; i < text.count()-1;i++)
+    {
+        if(text[i] == "Т" && text[i+1] =="У")
+        {
+             return false;
+        }
+    }
+
+    QString str = text.split(' ').last();
+
+    if(str == "ТУ")
+    {
+        return false;
+    }
+    else
+    {
+        str = text.split(' ').value(1).toUpper();
+
+
+
+        /*
+        if(str == "КОНДЕНСАТОР")
+        {
+          str = text.split(' ').value(2).toUpper();
+        }
+        if(str == "МИКРОСХЕМА")
+        {
+            str = text.split(' ').value(2).toUpper();
+        }s
+
+        */
+    }
+
+    qDebug () << str;
+    qDebug () << text;
+
+    for(int i=0; i < str.count();i++)
+    {
+        for(int j=0; j < russian.count();j++)
+        {
+            if(str[i] == russian[j])
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void MYWORD::CreatShablon()
 {
 
-    /*  Part("Создание шаблона с XP XS XW. ["+saveDir+"//XPXSXW]");
+    Part("Создание шаблона с XP XS XW. ["+saveDir+"//XPXSXW]");
 
     if(XP_XS_XW_X.count() > 0)
     {
@@ -4258,7 +4512,7 @@ void MYWORD::CreatShablon()
     }
 
 
-    */
+
 
 
     //Sleep(2000);
@@ -4273,7 +4527,7 @@ void MYWORD::CreatShablon()
     // Sleep(2000);
 
 
-    /*
+
 
 
     Part("Создание шаблона с BQ. ["+saveDir+"//BQ]");
@@ -4330,7 +4584,6 @@ void MYWORD::CreatShablon()
 
     // Sleep(2000);
 
-    */
 
     Part("Создание шаблона с R. ["+saveDir+"//R]");
 
@@ -4338,7 +4591,6 @@ void MYWORD::CreatShablon()
     {
         CreatShablon_R();
     }
-
 
 
 
@@ -4447,27 +4699,60 @@ QString MYWORD::addData_R_U_NTD(int i,double p)
         }
         else
         {
-             if(strR[2] == 'R')
-             {
-                 code += strR[1];
-                 code += ".";
-                 code += strR[strR.count()-3];
+            if(strR[2] == 'R')
+            {
+                code += strR[1];
+                code += ".";
+                code += strR[strR.count()-3];
 
-                 u = qSqrt(code.toDouble() *p);
-             }
-             else
-             {
+                u = qSqrt(code.toDouble() *p);
+            }
+            else
+            {
                 code += strR[1];
                 code += strR[2];
 
                 u = qSqrt((code.toInt() * qPow(10,QString(strR[strR.count()-3]).toInt()))*p);
-             }
+            }
         }
 
+        if( u == 0.0 )
+        {
+            code = "";
+            code += str[2];
+            code += str[3];
+            code += str[4];
+            code += str[5];
+
+            int  findIndex = r_cr_code.indexOf(code);
+
+            if(findIndex != -1)
+            {
+                return r_cr_Void.value(findIndex);
+            }
+        }
+        else
+        {
+            code = "";
+            code += str[2];
+            code += str[3];
+            code += str[4];
+            code += str[5];
+
+            int  findIndex = r_cr_code.indexOf(code);
+
+            if(findIndex != -1)
+            {
+                if(u > r_cr_Void.value(findIndex).toDouble())
+                {
+                    return r_cr_Void.value(findIndex);
+                }
+            }
 
 
+        }
 
-        return QString::number(u);
+        return QString::number(u,'f', 2);
     }
 
     return "";
