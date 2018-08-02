@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>D:/Project_Work_SFU/GpsGlonassTest/logo.ico</normaloff>D:/Project_Work_SFU/GpsGlonassTest/logo.ico</iconset>
+    <normaloff>../../../../Project_Work_SFU/GpsGlonassTest/logo.ico</normaloff>../../../../Project_Work_SFU/GpsGlonassTest/logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -208,7 +208,7 @@
     <item row="3" column="0">
      <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>Путь до шаблона С</string>
+       <string>Путь до шаблона С Z</string>
       </property>
      </widget>
     </item>

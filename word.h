@@ -119,6 +119,12 @@ public:
     QStringList r_cr_TemperatureRange;
     QStringList r_cr_Void;
 
+    QStringList z_nfm_code;
+    QStringList z_nfm_power;
+
+    QStringList c_avx_codePower;
+    QStringList c_avx_power;
+    QStringList c_avx_TemperatureRange;
 
 
 signals:

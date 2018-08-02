@@ -78,6 +78,33 @@ void MYWORD::setBD(BData *_data)
         r_cr_Void << model->record(i).value("Void").toString();
     }
 
+    model =  bd->getInquiry("SELECT *"
+                            " FROM Z_NFM");
+
+    z_nfm_code.clear();
+    z_nfm_power.clear();
+
+
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        z_nfm_code << model->record(i).value("Code").toString();
+        z_nfm_power << model->record(i).value("Power").toString();
+    }
+
+    model =  bd->getInquiry("SELECT *"
+                            " FROM C_AVX");
+
+    c_avx_codePower.clear();
+    c_avx_power.clear();
+    c_avx_TemperatureRange.clear();
+
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        c_avx_codePower << model->record(i).value("Code").toString();
+        c_avx_power << model->record(i).value("Power").toString();
+        c_avx_TemperatureRange << model->record(i).value("TemperatureRange").toString();
+    }
+
 }
 
 void MYWORD::process_start()
@@ -3963,19 +3990,28 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    RName.append(text);
+                    R.removeLast();
                 }
                 else
                 {
-                    RName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        RName.append(text);
+                    }
+                    else
+                    {
+                        RName.append(text);
+
+
+                    }
                 }
 
 
@@ -3994,19 +4030,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    C_ZName.append(text);
+                    C_Z.removeLast();
                 }
                 else
                 {
-                    C_ZName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        C_ZName.append(text);
+                    }
+                    else
+                    {
+                        C_ZName.append(text);
+                    }
                 }
 
 
@@ -4024,20 +4067,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    C_ZName.append(text);
+                    C_Z.removeLast();
                 }
                 else
                 {
-                    C_ZName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        C_ZName.append(text);
+                    }
+                    else
+                    {
+                        C_ZName.append(text);
+                    }
                 }
 
 
@@ -4055,19 +4104,27 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    XP_XS_XW_XName.append(text);
+                    XP_XS_XW_X.removeLast();
                 }
                 else
                 {
-                    XP_XS_XW_XName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        XP_XS_XW_XName.append(text);
+                    }
+                    else
+                    {
+                        XP_XS_XW_XName.append(text);
+
+                    }
                 }
 
 
@@ -4085,20 +4142,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    XP_XS_XW_XName.append(text);
+                    XP_XS_XW_X.removeLast();
                 }
                 else
                 {
-                    XP_XS_XW_XName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        XP_XS_XW_XName.append(text);
+                    }
+                    else
+                    {
+                        XP_XS_XW_XName.append(text);
+                    }
                 }
 
 
@@ -4116,19 +4179,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    XP_XS_XW_XName.append(text);
+                    XP_XS_XW_X.removeLast();
                 }
                 else
                 {
-                    XP_XS_XW_XName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        XP_XS_XW_XName.append(text);
+                    }
+                    else
+                    {
+                        XP_XS_XW_XName.append(text);
+                    }
                 }
 
 
@@ -4147,20 +4217,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    XP_XS_XW_XName.append(text);
+                    XP_XS_XW_X.removeLast();
                 }
                 else
                 {
-                    XP_XS_XW_XName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        XP_XS_XW_XName.append(text);
+                    }
+                    else
+                    {
+                        XP_XS_XW_XName.append(text);
+                    }
                 }
 
 
@@ -4178,19 +4254,28 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                qDebug () << text;
+
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    BQName.append(text);
+                    BQ.removeLast();
                 }
                 else
                 {
-                    BQName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        BQName.append(text);
+                    }
+                    else
+                    {
+                        BQName.append(text);
+                    }
                 }
 
                 break;
@@ -4207,20 +4292,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    DAName.append(text);
+                   DA.removeLast();
                 }
                 else
                 {
-                    DAName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        DAName.append(text);
+                    }
+                    else
+                    {
+                        DAName.append(text);
+                    }
                 }
 
 
@@ -4238,20 +4329,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    DDName.append(text);
+                   DD.removeLast();
                 }
                 else
                 {
-                    DDName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        DDName.append(text);
+                    }
+                    else
+                    {
+                        DDName.append(text);
+                    }
                 }
 
 
@@ -4269,19 +4366,27 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    UName.append(text);
+                   U.removeLast();
                 }
                 else
                 {
-                    UName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        UName.append(text);
+                    }
+                    else
+                    {
+                        UName.append(text);
+                    }
                 }
 
 
@@ -4300,21 +4405,27 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    LName.append(text);
+                   L.removeLast();
                 }
                 else
                 {
-                    LName.append(text);
-                }
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
 
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        LName.append(text);
+                    }
+                    else
+                    {
+                        LName.append(text);
+                    }
+                }
 
 
                 break;
@@ -4332,19 +4443,26 @@ void MYWORD::Findelements_Perechen()
 
                 text =  CellRange->property("Text").toString();
 
-                if(findRussianLanguage(text))
+                if(text == "Отсутствует\r\u0007")
                 {
-                    StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
-
-                    CellRange = StartCell->querySubObject("Range()");
-
-                    text+=CellRange->property("Text").toString();
-
-                    TVName.append(text);
+                   TV.removeLast();
                 }
                 else
                 {
-                    TVName.append(text);
+                    if(findRussianLanguage(text))
+                    {
+                        StartCell = Tables->querySubObject("Cell(Row, Column)", i+1, j+1);
+
+                        CellRange = StartCell->querySubObject("Range()");
+
+                        text+=CellRange->property("Text").toString();
+
+                        TVName.append(text);
+                    }
+                    else
+                    {
+                        TVName.append(text);
+                    }
                 }
 
 
@@ -4447,6 +4565,8 @@ bool MYWORD::findRussianLanguage(QString text)
     {
         text.remove(0,1);
     }
+
+
 
     auto list = text.split(' ');
 
@@ -5022,6 +5142,33 @@ QString MYWORD::addData_C_Power_NTD(int i)
         }
     }
 
+    if(str[0] == 'N' && str[1] == 'F' && str[2] == 'M')
+    {
+        codePower += str[11];
+        codePower += str[12];
+
+        findIndex = z_nfm_code.indexOf(codePower);
+
+        if(findIndex != -1)
+        {
+            return z_nfm_power.value(findIndex);
+        }
+    }
+
+    if(str[0] == 'A' && str[1] == 'V' && str[2] == 'X')
+    {
+        codePower += str[11];
+        codePower += str[12];
+        codePower += str[13];
+
+        findIndex = c_avx_codePower.indexOf(codePower);
+
+        if(findIndex != -1)
+        {
+            return c_avx_power.value(findIndex);
+        }
+    }
+
     return "";
 }
 
@@ -5042,6 +5189,13 @@ QString MYWORD::addData_C_TemperatureRange_NTD(int i)
         {
             return c_grm_TemperatureRange.value(findIndex);
         }
+    }
+
+    if(str[0] == 'A' && str[1] == 'V' && str[2] == 'X')
+    {
+
+       return c_avx_TemperatureRange.first();
+
     }
 
     return "";
