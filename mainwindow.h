@@ -7,6 +7,7 @@
 #include <QThread>
 
 #include <word.h>
+#include <bdata.h>
 
 #include <QProgressBar>
 #include <QLabel>
@@ -23,9 +24,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-     QStringList fileNames,fileNames_S_R,fileNames_XP_XS_XW,fileNames_C_Z,fileNames_BQ,fileNames_DA_DD,fileNames_findMSWord;
+     QStringList fileNames,fileNames_S_R,fileNames_XP_XS_XW_X,fileNames_C_Z,fileNames_BQ,fileNames_DA,fileNames_DD,fileNames_findMSWord;
+
+     QStringList fileNames_U , fileNames_L,fileNames_TV;
+
+     QStringList fileNames_VT , fileNames_HL_VD;
 
      MYWORD* word ;
+     BData* bd;
 
      QLabel* InformLoading;
      QProgressBar* prBar;
@@ -60,6 +66,21 @@ private slots:
     void on_pushButton_7_clicked();
 
     void on_pushButton_6_clicked();
+
+    void on_pushButton_8_clicked();
+
+    void on_pushButton_9_clicked();
+
+    void on_pushButton_10_clicked();
+
+    void on_pushButton_11_clicked();
+
+    void on_pushButton_12_clicked();
+
+
+    void on_pushButton_13_clicked();
+
+    void on_pushButton_14_clicked();
 
 private:
     Ui::MainWindow *ui;
